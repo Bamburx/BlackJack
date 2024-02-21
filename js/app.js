@@ -5,6 +5,7 @@ let p2 = [];
 const cardValues = [];
 let cardCount = 0;
 let PLAYER_CARDS_COUNT = 2;
+cardDeck()
 const DECK_SIZE = cardValues.length;
 const score = document.querySelector('.score');
 const p2Board = document.querySelector('#player-2');
@@ -32,15 +33,15 @@ function cardDeck() {
   }
 }
 }
-cardDeck()
+
 
 function deckShuffle() {
-    for (let i = 0; i < DECK_SIZE; i++) {
-    let card = cardValues[i];
-    let randomId = Math.floor(Math.random() * DECK_SIZE)
-    cardValues[i] = cardValues[randomId];
-    cardValues[randomId] = card;
-  }
+  for (let i = 0; i < DECK_SIZE; i++) {
+  let card = cardValues[i];
+  let randomId = Math.floor(Math.random() * DECK_SIZE)
+  cardValues[i] = cardValues[randomId];
+  cardValues[randomId] = card;
+}
 }
 
 function resetGame() {
@@ -74,8 +75,8 @@ btnGame.addEventListener('click', () => {
 })
 
 btnAdd.addEventListener('click', () => {
-  if (state.score <= 21) {
   let addCard = cardValues.shift();
+  console.log(addCard)
   p2.push(addCard);
   const div = document.createElement("div")
     div.id = addCard.id;
@@ -84,20 +85,10 @@ btnAdd.addEventListener('click', () => {
     p2Board.append(div)
   state.score += addCard.value
   score.innerHTML = state.score;
-  }  
+  
   
   if (state.score > 21) {
-    let addCard = cardValues.shift();
-  p2.push(addCard);
-  const div = document.createElement("div")
-    div.id = addCard.id;
-    div.className = `card ${addCard.rank} ${addCard.suit}`;
-    div.innerText = `${addCard.rank} ${addCard.suit}`;
-    p2Board.append(div)
-  state.score += addCard.value
-  score.innerHTML = state.score;
     alert(`Your score is ${state.score}. You loose`);
-    resetGame()
   }
 })
 
