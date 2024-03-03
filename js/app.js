@@ -1,12 +1,6 @@
-const ranks = ['2','3','4','5','6','7','8','9', '10', 'jack', 'queen', 'king', 'ace'];
-const value = [2,3,4,5,6,7,8,9,10,10,10,10,11];
-const suits = ['♥', '♣', '♦', '♠'];
-let p2 = [];
-const cardValues = [];
+let playersHand = [];
 let cardCount = 0;
-let PLAYER_CARDS_COUNT = 2;
-cardDeck()
-const DECK_SIZE = cardValues.length;
+const PLAYER_CARDS_COUNT = 2;
 const score = document.querySelector('.score');
 const p2Board = document.querySelector('#player-2');
 const btnEnd = document.querySelector('#endGame');
@@ -20,50 +14,64 @@ const state = {
   // },
 }
 
-function cardDeck() {
+
+function getCardDeck() {
+  const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace'];
+  const values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11];
+  const suits = ['♥', '♣', '♦', '♠'];
+  const cardDeck = [];
+
   for (let suitsIndex = 0; suitsIndex < suits.length; suitsIndex++) {
-  for (let ranksIndex = 0; ranksIndex < ranks.length; ranksIndex++) {
-    cardValues.push({
-      id: cardCount, 
-      rank: ranks[ranksIndex],
-      value: value[ranksIndex],
-      suit: suits[suitsIndex],
-    })
-    cardCount++
+    for (let ranksIndex = 0; ranksIndex < ranks.length; ranksIndex++) {
+      cardDeck.push({
+        rank: ranks[ranksIndex],
+        value: values[ranksIndex],
+        suit: suits[suitsIndex],
+      })
+    }
   }
-}
+  return cardDeck;
 }
 
 
-function deckShuffle() {
+function shuffleDeck(cardDeck) {
+  console.log(cardDeck)
+  const DECK_SIZE = cardDeck.length;
+  const result = [...cardDeck];
+
+
   for (let i = 0; i < DECK_SIZE; i++) {
-  let card = cardValues[i];
-  let randomId = Math.floor(Math.random() * DECK_SIZE)
-  cardValues[i] = cardValues[randomId];
-  cardValues[randomId] = card;
+    let card = result[i];
+    let randomId = Math.floor(Math.random() * DECK_SIZE)
+    result[i] = result[randomId];
+    result[randomId] = card;
+  }
+  return result;
 }
-}
+
+let cardValues = [];
+
 
 function resetGame() {
   btnGame.disabled = false;
   btnAdd.disabled = true;
-  p2.splice(0, p2.length);
+  playersHand.splice(0, playersHand.length);
   cardValues.splice(0, cardValues.length);
   p2Board.innerHTML = '';
   state.score = 0;
   score.innerHTML = 0;
-  cardDeck()
+  cardValues = shuffleDeck(getCardDeck());
 }
 
 btnGame.addEventListener('click', () => {
-  deckShuffle();
+  cardValues = shuffleDeck(getCardDeck());
   btnGame.disabled = true;
   btnAdd.disabled = false;
-  p2 = cardValues.splice(0, PLAYER_CARDS_COUNT)
-  p2.sort((a, b) => a.rank - b.rank)
+  playersHand = cardValues.splice(0, PLAYER_CARDS_COUNT)
+  playersHand.sort((a, b) => a.rank - b.rank)
 
   // assert that elements count === PLAYER_CARDS_COUNT
-  for (let cardValue of p2) {
+  for (let cardValue of playersHand) {
     const div = document.createElement("div")
     div.id = cardValue.id;
     div.className = `card ${cardValue.rank} ${cardValue.suit}`;
@@ -71,28 +79,28 @@ btnGame.addEventListener('click', () => {
     p2Board.append(div)
     state.score += cardValue.value
   }
- score.innerHTML = state.score;
+  score.innerHTML = state.score;
 })
 
 btnAdd.addEventListener('click', () => {
   let addCard = cardValues.shift();
   console.log(addCard)
-  p2.push(addCard);
+  playersHand.push(addCard);
   const div = document.createElement("div")
-    div.id = addCard.id;
-    div.className = `card ${addCard.rank} ${addCard.suit}`;
-    div.innerText = `${addCard.rank} ${addCard.suit}`;
-    p2Board.append(div)
+  div.id = addCard.id;
+  div.className = `card ${addCard.rank} ${addCard.suit}`;
+  div.innerText = `${addCard.rank} ${addCard.suit}`;
+  p2Board.append(div)
   state.score += addCard.value
   score.innerHTML = state.score;
-  
-  
+
+
   if (state.score > 21) {
     alert(`Your score is ${state.score}. You loose`);
   }
 })
 
 btnEnd.addEventListener('click', () => {
-    alert(`Your score is ${state.score}`);
-    resetGame()
+  alert(`Your score is ${state.score}`);
+  resetGame()
 })
